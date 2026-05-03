@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service & Maintenance Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo">Smart Tech Solutions - Service Portal</div>
+    <nav class="nav">
+      <span id="currentRoleLabel" class="role-label">Not signed in</span>
+    </nav>
+    <div class="user-area" id="userArea">
+      <span id="currentUserName"></span>
+      <button id="logoutBtn" class="btn small">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Intro -->
+    <section class="card intro-card">
+      <h1> Technician Management System</h1>
+      <p>
+        Smart Tech Solutions is a modern technology company delivering high-quality electronic products and professional maintenance services. Through our advanced Service Management Portal, customers can easily submit service requests, monitor service status, and receive fast, reliable technical support.
+
+Our platform ensures efficient coordination between customers, technicians, and administrators, enhancing productivity and service quality across all operations.
+      </p>
+    </section>
+
+    <!-- Authentication -->
+    <section class="card auth-card" id="authSection">
+      <div class="tabs">
+        <button class="tab-button active" data-tab="login">Login</button>
+        <button class="tab-button" data-tab="register">Register (Customer)</button>
+      </div>
+
+      <div class="tab-content" id="loginTab">
+        <form id="loginForm" class="form-grid">
+          <div class="form-group full-width">
+          </div>
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" required />
+          </div>
+          <div class="form-actions full-width">
+            <button type="submit" class="btn primary">Sign in</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-content hidden" id="registerTab">
+        <form id="registerForm" class="form-grid">
+          <div class="form-group">
+            <label for="registerName">Full name</label>
+            <input id="registerName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">Email</label>
+            <input id="registerEmail" type="email" required />
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Password</label>
+            <input id="registerPassword" type="password" required minlength="4" />
+          </div>
+          <div class="form-group">
+            <label for="registerPhone">Phone (optional)</label>
+            <input id="registerPhone" type="tel" placeholder="e.g. +9665xxxxxxxx" />
+          </div>
+          <div class="form-group full-width">
+            <label for="registerAddress">Address (optional)</label>
+            <input id="registerAddress" type="text" placeholder="City, street, building" />
+          </div>
+          <div class="form-group full-width">
+            <p class="hint">Your account will be created as a <strong>Customer</strong>.</p>
+          </div>
+          <div class="form-actions full-width">
+            <button type="submit" class="btn primary">Create account</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Customer View -->
+    <section id="customerView" class="role-section hidden">
+      <section id="customerRequestForm" class="card">
+        <h2>New Service Request (Customer)</h2>
+        <p class="hint">
+          Your service request will be linked to your account; an administrator can assign
+          a technician later.
+        </p>
+        <form id="serviceForm" class="form-grid">
+          <div class="form-group">
+            <label for="customerProduct">Related product</label>
+            <select id="customerProduct">
+              <option value="">No specific product</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="requestDate">Request date</label>
+            <input id="requestDate" type="date" required />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="problemDescription">Problem description</label>
+            <textarea
+              id="problemDescription"
+              rows="3"
+              required
+              placeholder="Describe the issue in detail"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="serviceFee">Expected service fee (optional)</label>
+            <input id="serviceFee" type="number" min="0" step="0.01" placeholder="e.g. 150" />
+          </div>
+
+          <div class="form-actions full-width">
+            <button type="submit" class="btn primary">Submit request</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="customerRequestsList" class="card">
+        <h2>My service history</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Request #</th>
+                <th>Product</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Fee</th>
+              </tr>
+            </thead>
+            <tbody id="customerRequestsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Technician View -->
+    <section id="technicianView" class="role-section hidden">
+      <section class="card">
+        <h2>Service requests assigned to me</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Request #</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="technicianRequestsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Admin View -->
+    <section id="adminView" class="role-section hidden">
+      <section class="card">
+        <h2>Admin Dashboard</h2>
+        <div class="stat-cards" id="adminStats"></div>
+      </section>
+
+      <section class="card">
+        <h2>Technicians management</h2>
+        <form id="addTechnicianForm" class="form-grid">
+          <div class="form-group">
+            <label for="techName">Technician name</label>
+            <input id="techName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="techEmail">Email</label>
+            <input id="techEmail" type="email" required />
+          </div>
+          <div class="form-group">
+            <label for="techPassword">Password</label>
+            <input id="techPassword" type="password" required minlength="4" />
+          </div>
+          <div class="form-group">
+            <label for="techPhone">Phone (optional)</label>
+            <input id="techPhone" type="tel" placeholder="e.g. +9665xxxxxxxx" />
+          </div>
+          <div class="form-group">
+            <label for="techPosition">Position (optional)</label>
+            <input id="techPosition" type="text" placeholder="e.g. Senior Technician" />
+          </div>
+          <div class="form-actions full-width">
+            <button type="submit" class="btn primary">Add technician</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Products management</h2>
+        <form id="addProductForm" class="form-grid">
+          <div class="form-group">
+            <label for="productName">Product name</label>
+            <input id="productName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="productModel">Model</label>
+            <input id="productModel" type="text" />
+          </div>
+          <div class="form-group">
+            <label for="productSerial">Serial number</label>
+            <input id="productSerial" type="text" />
+          </div>
+          <div class="form-group full-width">
+            <label for="productDescription">Description (optional)</label>
+            <textarea id="productDescription" rows="2" placeholder="Short description of the product"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="productWarranty">Warranty period (optional)</label>
+            <input id="productWarranty" type="text" placeholder="e.g. 1 year, 6 months" />
+          </div>
+          <div class="form-actions full-width">
+            <button type="submit" class="btn primary">Add product</button>
+          </div>
+        </form>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Model</th>
+                <th>Serial</th>
+                <th>Description</th>
+                <th>Warranty</th>
+              </tr>
+            </thead>
+            <tbody id="adminProductsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>All service requests</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Request #</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Technician</th>
+                <th>Status</th>
+                <th>Assign / Update</th>
+              </tr>
+            </thead>
+            <tbody id="adminRequestsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 All rights reserved.</span>
+  </footer>
+
+  <script src="app-unified.js"></script>
+</body>
+</html>
